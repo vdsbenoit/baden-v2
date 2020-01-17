@@ -1,24 +1,91 @@
-<ion-app>
+<ion-app [class.dark-theme]="dark">
   <ion-split-pane contentId="main-content">
-    <ion-menu contentId="main-content" type="overlay">
+
+    <ion-menu contentId="main-content">
       <ion-header>
         <ion-toolbar>
           <ion-title>Menu</ion-title>
         </ion-toolbar>
       </ion-header>
+
       <ion-content>
-        <ion-list>
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-            <ion-item [routerDirection]="'root'" [routerLink]="[p.url]">
+        <ion-list lines="none">
+          <ion-list-header>
+            Navigation
+          </ion-list-header>
+          <ion-menu-toggle autoHide="false" *ngFor="let p of appPages; let i = index">
+            <ion-item [routerLink]="p.url" routerLinkActive="active" routerDirection="root" detail="false">
               <ion-icon slot="start" [name]="p.icon"></ion-icon>
               <ion-label>
                 {{p.title}}
               </ion-label>
             </ion-item>
+
           </ion-menu-toggle>
+        </ion-list>
+
+        <ion-list *ngIf="loggedIn" lines="none">
+          <ion-list-header>
+            Compte
+          </ion-list-header>
+
+          <ion-menu-toggle autoHide="false">
+            <ion-item routerLink="/admin" routerLinkActive="active" routerDirection="root" detail="false">
+              <ion-icon slot="start" name="person"></ion-icon>
+              <ion-label>
+                Administration
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle autoHide="false">
+            <ion-item button (click)="logout()" detail="false">
+              <ion-icon slot="start" name="log-out"></ion-icon>
+              <ion-label>
+                Déconnexion
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+        </ion-list>
+
+        <ion-list *ngIf="!loggedIn" lines="none">
+          <ion-list-header>
+            Compte
+          </ion-list-header>
+
+          <ion-menu-toggle autoHide="false">
+            <ion-item routerLink="/login" routerLinkActive="active" routerDirection="root" detail="false">
+              <ion-icon slot="start" name="log-in"></ion-icon>
+              <ion-label>
+                Connexion
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+
+          <ion-menu-toggle autoHide="false">
+            <ion-item routerLink="/signup" routerLinkActive="active" routerDirection="root" detail="false">
+              <ion-icon slot="start" name="person-add"></ion-icon>
+              <ion-label>
+                Inscription
+              </ion-label>
+            </ion-item>
+          </ion-menu-toggle>
+        </ion-list>
+
+        <ion-list>
+          <ion-item>
+            <ion-label>
+              Dark Theme
+            </ion-label>
+            <ion-toggle [(ngModel)]="dark"></ion-toggle>
+          </ion-item>
         </ion-list>
       </ion-content>
     </ion-menu>
+
     <ion-router-outlet id="main-content"></ion-router-outlet>
+
   </ion-split-pane>
+
 </ion-app>
