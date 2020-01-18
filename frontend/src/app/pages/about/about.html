@@ -3,41 +3,41 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>A propos</ion-title>
+    <ion-title>Info</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="about-header">
-    <img src="assets/img/ionic-logo-white.svg" alt="ionic logo">
+    <img src="assets/img/Logo-bb-2020.png" alt="Logo Baden Battle">
   </div>
   <div class="about-info">
-    <h4 class="ion-padding-start">Ionic Conference</h4>
-
     <ion-list lines="none">
       <ion-item>
         <ion-icon name="calendar" slot="start"></ion-icon>
         <ion-label position="stacked">Date</ion-label>
-        <ion-datetime displayFormat="MMM DD, YYYY" max="2056" [(ngModel)]="conferenceDate"></ion-datetime>
+        <ion-datetime displayFormat="DD MMM YYYY" max="2100" [(ngModel)]="date"></ion-datetime>
       </ion-item>
 
       <ion-item>
         <ion-icon name="pin" slot="start"></ion-icon>
-        <ion-label position="stacked">Location</ion-label>
-        <ion-select>
-          <ion-select-option value="madison" selected>Madison, WI</ion-select-option>
-          <ion-select-option value="austin">Austin, TX</ion-select-option>
-          <ion-select-option value="chicago">Chicago, IL</ion-select-option>
-          <ion-select-option value="seattle">Seattle, WA</ion-select-option>
-        </ion-select>
+        <ion-label position="stacked">Lieu</ion-label>
+        <div style="white-space: pre-wrap">{{location}}</div>
       </ion-item>
     </ion-list>
 
     <p class="ion-padding-start ion-padding-end">
-      The Ionic Conference is a one-day conference featuring talks from the Ionic team. It is focused on Ionic applications being
-      built with Ionic Framework. This includes migrating apps to the latest Ionic Framework, Angular concepts, Webpack, Sass, and many
-      other technologies used in Ionic Framework. Tickets are completely sold out, and we’re expecting more than 1000 developers
-      – making this the largest Ionic conference ever!
+      Il sʼagit dʼun grand rassemblement scout, guide et patro à destination des étincelles, lutins, louvettes,
+      louveteaux et chevaliers (donc de 8 à 12 ans, filles et garçons) mais également depuis cette année à destination
+      des plus jeunes âgés de 5 à 7 ans (baladins et nutons), organisé par le poste pionnier Peter Pan de Soignies.
+      Durant toute la journée, les participants passent à travers de nombreuses activités opposant les sections entre
+      elles sous forme de petites équipes. Le but ultime étant, évidemment, de gagner des défis ainsi que de nombreux
+      prix. Les animations sont variées afin que tout le monde s'y retrouve: certaines sont physiques, d'autres
+      intellectuelles ou même culturelles. La coopération sera de mise pour atteindre le podium! <br><br>
+
+      Pour toute information complémentaire, n'hésitez pas à nous joindre sur notre
+      <a href="https://www.facebook.com/badenbattle/">page Facebook</a> ou via notre
+      <a href="mailto:infobadenbattle@gmail.com">adresse email</a>.
     </p>
   </div>
 </ion-content>

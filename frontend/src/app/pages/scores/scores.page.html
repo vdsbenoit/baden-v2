@@ -1,9 +1,42 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>scores</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Scores</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>
+        Louveteaux Férao
+      </ion-card-title>
+      <ion-card-subtitle>
+        Soignies
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <ion-list>
+        <ion-item class="ion-no-padding">
+          <ion-label>Score de l'équipe</ion-label><ion-note slot="end" color="medium">5</ion-note>
+        </ion-item>
+
+        <ion-item class="ion-no-padding">
+          <ion-label>Moyenne section</ion-label><ion-note slot="end" color="medium">7</ion-note>
+        </ion-item>
+
+        <ion-item class="ion-no-padding">
+          <ion-label>Classement équipe</ion-label><ion-note slot="end" color="medium">14</ion-note>
+        </ion-item>
+
+        <ion-item class="ion-no-padding">
+          <ion-label>Classement section</ion-label><ion-note slot="end" color="medium">3</ion-note>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
 </ion-content>
