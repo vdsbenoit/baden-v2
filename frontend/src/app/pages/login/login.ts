@@ -11,8 +11,8 @@ import {AuthService} from '../../services/auth.service';
   styleUrls: ['./login.scss'],
 })
 export class LoginPage {
-  email: string;
-  password: string;
+  emailValue: string;
+  passwordValue: string;
   submitted = false;
 
   constructor(
@@ -24,7 +24,7 @@ export class LoginPage {
     this.submitted = true;
 
     if (form.valid) {
-      this.auth.login(this.email, this.password);
+      this.auth.login(this.emailValue, this.passwordValue);
     }
   }
 

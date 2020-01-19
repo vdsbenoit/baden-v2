@@ -9,9 +9,9 @@ import {AuthService} from '../../services/auth.service';
   styleUrls: ['./signup.scss'],
 })
 export class SignupPage {
-  username: string;
-  email: string;
-  password: string;
+  usernameValue: string;
+  emailValue: string;
+  passwordValue: string;
   submitted = false;
 
   constructor(
@@ -23,7 +23,7 @@ export class SignupPage {
     this.submitted = true;
 
     if (form.valid) {
-      this.auth.signUp(this.username, this.password, this.username);
+      this.auth.signUp(this.emailValue, this.passwordValue, this.usernameValue);
     }
   }
 }

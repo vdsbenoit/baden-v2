@@ -17,7 +17,7 @@
     <ion-list lines="none">
       <ion-item>
         <ion-label position="stacked" color="primary">Totem</ion-label>
-        <ion-input [(ngModel)]="username" name="username" type="text" #username="ngModel" autocapitalize="off" required>
+        <ion-input [(ngModel)]="usernameValue" name="username" type="text" #username="ngModel" autocapitalize="off" required>
         </ion-input>
       </ion-item>
       <ion-text color="danger">
@@ -28,7 +28,7 @@
 
       <ion-item>
         <ion-label position="stacked" color="primary">Email</ion-label>
-        <ion-input [(ngModel)]="email" name="email" type="email" #email="ngModel" autocapitalize="off" required>
+        <ion-input [(ngModel)]="emailValue" name="email" type="email" #email="ngModel" autocapitalize="off" required>
         </ion-input>
       </ion-item>
       <ion-text color="danger">
@@ -39,7 +39,7 @@
 
       <ion-item>
         <ion-label position="stacked" color="primary">Mot de passe</ion-label>
-        <ion-input [(ngModel)]="password" name="password" type="password" #password="ngModel" required>
+        <ion-input [(ngModel)]="passwordValue" name="password" type="password" #password="ngModel" required>
         </ion-input>
       </ion-item>
       <ion-text color="danger">
