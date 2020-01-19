@@ -22,15 +22,16 @@
     "@angular/router": "~8.1.2",
     "@angular/service-worker": "~8.1.2",
     "@ionic-native/core": "^5.0.0",
+    "@ionic-native/in-app-browser": "latest",
     "@ionic-native/splash-screen": "^5.0.0",
     "@ionic-native/status-bar": "^5.0.0",
     "@ionic/angular": "^4.7.1",
+    "@ionic/storage": "latest",
     "core-js": "^2.5.4",
+    "ngx-ionic-image-viewer": "^0.4.0",
     "rxjs": "~6.5.1",
     "tslib": "^1.9.0",
-    "zone.js": "~0.9.1",
-    "@ionic/storage": "latest",
-    "@ionic-native/in-app-browser": "latest"
+    "zone.js": "~0.9.1"
   },
   "devDependencies": {
     "@angular-devkit/architect": "~0.801.2",

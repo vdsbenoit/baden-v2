@@ -3,13 +3,16 @@
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>Map</ion-title>
+    <ion-title>{{pageTitle}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 
 <ion-content>
-  <div class="pinch-zoom-container">
-    <img src="assets/img/map.jpg" alt="Map">
-  </div>
+  <ion-img-viewer
+          alt="{{pageTitle}}"
+          title="{{pageTitle}}"
+          [scheme]="getTheme()"
+          src="/assets/img/map.jpg">
+  </ion-img-viewer>
 </ion-content>

@@ -4,12 +4,14 @@ import { IonicModule } from '@ionic/angular';
 
 import { MapPage } from './map';
 import { MapPageRoutingModule } from './map-routing.module';
+import {NgxIonicImageViewerModule} from 'ngx-ionic-image-viewer';
 
 @NgModule({
   imports: [
     CommonModule,
     IonicModule,
-    MapPageRoutingModule
+    MapPageRoutingModule,
+    NgxIonicImageViewerModule,
   ],
   declarations: [
     MapPage,
