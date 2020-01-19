@@ -4,7 +4,12 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/app',
+    redirectTo: '/app/tabs/schedule',
+    pathMatch: 'full'
+  },
+  {
+    path: 'home',
+    redirectTo: '/app/tabs/schedule',
     pathMatch: 'full'
   },
   {

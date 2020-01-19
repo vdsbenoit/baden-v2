@@ -35,7 +35,7 @@ export class AuthService {
     return this.afAuth.auth.signInWithEmailAndPassword(email, password)
       .then((result) => {
         this.ngZone.run(() => {
-          this.router.navigate(['/app']);
+          this.router.navigate(['/home']);
         });
         // this.SetUserData(result.user); //TODO: check if useful
         window.dispatchEvent(new CustomEvent('user:login'));
@@ -59,7 +59,7 @@ export class AuthService {
     return this.afAuth.auth.currentUser.sendEmailVerification()
       .then(() => {
         this.popup.info('Un mail de vérification a été envoyé à votre adresse').then(() => {
-            this.router.navigate(['/app']);
+            this.router.navigate(['/home']);
           });
       });
   }
