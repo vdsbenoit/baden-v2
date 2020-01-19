@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./about.scss'],
 })
 export class AboutPage {
-  date = '2020-04-25';
+  date = '25 Avril 2020';
   location = 'Collège St Vincent\nChaussée de Braine, 22\n7060 Soignies';
 
   constructor() { }
