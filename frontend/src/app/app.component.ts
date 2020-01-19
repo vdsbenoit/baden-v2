@@ -9,7 +9,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { Storage } from '@ionic/storage';
 
-import { UserData } from './providers/user-data';
+import {AuthService} from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -50,9 +50,9 @@ export class AppComponent implements OnInit {
     private splashScreen: SplashScreen,
     private statusBar: StatusBar,
     private storage: Storage,
-    private userData: UserData,
     private swUpdate: SwUpdate,
     private toastCtrl: ToastController,
+    public auth: AuthService,
   ) {
     this.initializeApp();
   }
@@ -86,9 +86,7 @@ export class AppComponent implements OnInit {
   }
 
   checkLoginStatus() {
-    return this.userData.isLoggedIn().then(loggedIn => {
-      return this.updateLoggedInStatus(loggedIn);
-    });
+    this.updateLoggedInStatus(this.auth.isLoggedIn());
   }
 
   updateLoggedInStatus(loggedIn: boolean) {
@@ -112,7 +110,7 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.userData.logout().then(() => {
+    this.auth.logout().then(() => {
       return this.router.navigateByUrl('/app/tabs/schedule');
     });
   }

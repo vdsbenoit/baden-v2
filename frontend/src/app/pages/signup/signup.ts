@@ -1,12 +1,7 @@
 import { Component} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { UserData } from '../../providers/user-data';
-
-import { UserOptions } from '../../interfaces/user-options';
-
-
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'page-signup',
@@ -14,20 +9,21 @@ import { UserOptions } from '../../interfaces/user-options';
   styleUrls: ['./signup.scss'],
 })
 export class SignupPage {
-  signup: UserOptions = { username: '', password: '' };
+  username: string;
+  email: string;
+  password: string;
   submitted = false;
 
   constructor(
     public router: Router,
-    public userData: UserData
+    private auth: AuthService,
   ) {}
 
   onSignup(form: NgForm) {
     this.submitted = true;
 
     if (form.valid) {
-      this.userData.signup(this.signup.username);
-      this.router.navigateByUrl('/app/tabs/schedule');
+      this.auth.signUp(this.username, this.password, this.username);
     }
   }
 }

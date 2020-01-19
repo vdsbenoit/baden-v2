@@ -14,6 +14,9 @@ import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage';
 import {NgxIonicImageViewerModule} from 'ngx-ionic-image-viewer';
+import {AngularFireModule} from '@angular/fire';
+import {AngularFireAuthModule} from '@angular/fire/auth';
+import {AngularFirestoreModule} from '@angular/fire/firestore';
 
 @NgModule({
   imports: [
@@ -27,6 +30,9 @@ import {NgxIonicImageViewerModule} from 'ngx-ionic-image-viewer';
       enabled: environment.production
     }),
     NgxIonicImageViewerModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
+    AngularFireAuthModule,
+    AngularFirestoreModule,
   ],
   declarations: [AppComponent],
   providers: [InAppBrowser, SplashScreen, StatusBar],
