@@ -36,7 +36,7 @@ export class PopupService {
       message: text,
       buttons: [
         {
-          text: 'Cancel',
+          text: 'Annuler',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
@@ -45,7 +45,7 @@ export class PopupService {
           }
         },
         {
-          text: 'Confirm',
+          text: 'Confirmer',
           handler: () => {
             console.log('User confirme "' + text + '"');
             confirmHandler();
@@ -63,7 +63,7 @@ export class PopupService {
       message: text,
       buttons: [
         {
-          text: 'No',
+          text: 'Non',
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
@@ -72,7 +72,7 @@ export class PopupService {
           }
         },
         {
-          text: 'Yes',
+          text: 'Oui',
           handler: () => {
             console.log('User chose "yes" to prompt "' + text + '"');
             yesHandler();
