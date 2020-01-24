@@ -29,4 +29,3 @@ WORKDIR /ionicapp
 
 
 
-
