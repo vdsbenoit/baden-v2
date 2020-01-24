@@ -19,7 +19,7 @@ export class SignupPage implements OnInit {
     public router: Router,
     private auth: AuthService,
     private route: ActivatedRoute,
-    private navCtrl: NavController,
+    public navCtrl: NavController,
   ) {}
 
   ngOnInit() {
