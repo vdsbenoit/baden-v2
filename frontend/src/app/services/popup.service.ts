@@ -10,7 +10,7 @@ export class PopupService {
     public alertController: AlertController
   ) { }
 
-  async error(text: string, title = 'Error') {
+  async error(text: string, title = 'Erreur') {
     const alert = await this.alertController.create({
       header: title,
       message: text,
@@ -32,11 +32,11 @@ export class PopupService {
 
   async confirm(text: string, confirmHandler: any, declineHandler?: any) {
     const alert = await this.alertController.create({
-      header: 'Please confirm',
+      header: 'Tu confirmes?',
       message: text,
       buttons: [
         {
-          text: 'Annuler',
+          text: "Non, annule",
           role: 'cancel',
           cssClass: 'secondary',
           handler: () => {
@@ -45,7 +45,7 @@ export class PopupService {
           }
         },
         {
-          text: 'Confirmer',
+          text: 'Je confirme',
           handler: () => {
             console.log('User confirme "' + text + '"');
             confirmHandler();
@@ -59,7 +59,7 @@ export class PopupService {
 
   async yesNo(text: string, yesHandler: any, noHandler?: any) {
     const alert = await this.alertController.create({
-      header: 'Please confirm',
+      header: 'Tu confirmes?',
       message: text,
       buttons: [
         {
