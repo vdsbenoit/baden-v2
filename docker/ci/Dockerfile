@@ -26,6 +26,3 @@ RUN apt-get update -qq\
  && mkdir /ionicapp
 
 WORKDIR /ionicapp
-
-
-
