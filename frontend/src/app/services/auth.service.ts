@@ -41,6 +41,7 @@ export class AuthService {
           });
         }
       } else {
+        console.log("User is null");
         localStorage.setItem('user', null);
         window.dispatchEvent(new CustomEvent('user:logout'));
       }
