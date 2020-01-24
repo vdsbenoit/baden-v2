@@ -1,18 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
+import {NgForm} from '@angular/forms';
 import {NavController} from '@ionic/angular';
 
 @Component({
-  selector: 'page-signup',
-  templateUrl: 'signup.html',
-  styleUrls: ['./signup.scss'],
+  selector: 'app-forgot-password',
+  templateUrl: './forgot-password.page.html',
+  styleUrls: ['./forgot-password.page.scss'],
 })
-export class SignupPage implements OnInit {
-  usernameValue: string;
+export class ForgotPasswordPage implements OnInit {
   emailValue: string;
-  passwordValue: string;
   submitted = false;
 
   constructor(
@@ -20,7 +18,7 @@ export class SignupPage implements OnInit {
     private auth: AuthService,
     private route: ActivatedRoute,
     private navCtrl: NavController,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(() => {
@@ -30,11 +28,12 @@ export class SignupPage implements OnInit {
     });
   }
 
-  onSignup(form: NgForm) {
+  sentEmail(form: NgForm) {
     this.submitted = true;
 
     if (form.valid) {
-      this.auth.signUp(this.emailValue, this.passwordValue, this.usernameValue);
+      this.auth.forgotPassword(this.emailValue);
     }
   }
+
 }

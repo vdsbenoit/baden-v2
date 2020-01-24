@@ -57,7 +57,7 @@ export class PopupService {
     await alert.present();
   }
 
-  async yesNo(text: string, yesHandler: any, noHandler: any) {
+  async yesNo(text: string, yesHandler: any, noHandler?: any) {
     const alert = await this.alertController.create({
       header: 'Please confirm',
       message: text,

@@ -1,9 +1,7 @@
 import { Component} from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import {NavigationExtras, Router} from '@angular/router';
 import {AuthService} from '../../services/auth.service';
-
-
 
 @Component({
   selector: 'page-login',
@@ -28,7 +26,13 @@ export class LoginPage {
     }
   }
 
-  onSignup() {
-    this.router.navigateByUrl('/signup');
+  navigateTo(page: string) {
+    const navigationExtras: NavigationExtras = {
+      state: {
+        email: this.emailValue
+      }
+    };
+    this.router.navigate([page], navigationExtras);
   }
+
 }

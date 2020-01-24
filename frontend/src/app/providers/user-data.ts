@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
+// fixme: this file is deprecated. To be removed with the original schedule
 
 @Injectable({
   providedIn: 'root'

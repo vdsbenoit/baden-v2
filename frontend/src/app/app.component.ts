@@ -100,10 +100,6 @@ export class AppComponent implements OnInit {
       this.updateLoggedInStatus(true);
     });
 
-    window.addEventListener('user:signup', () => {
-      this.updateLoggedInStatus(true);
-    });
-
     window.addEventListener('user:logout', () => {
       this.updateLoggedInStatus(false);
     });
@@ -111,7 +107,7 @@ export class AppComponent implements OnInit {
 
   logout() {
     this.auth.logout().then(() => {
-      return this.router.navigateByUrl('/app/tabs/schedule');
+      return this.router.navigateByUrl('/home');
     });
   }
 
