@@ -63,10 +63,10 @@ export class AppComponent implements OnInit {
 
     this.swUpdate.available.subscribe(async res => {
       const toast = await this.toastCtrl.create({
-        message: 'Update available!',
+        message: 'Une mise à jour est disponible!',
         showCloseButton: true,
         position: 'bottom',
-        closeButtonText: `Reload`
+        closeButtonText: `Vas-y`
       });
 
       await toast.present();
