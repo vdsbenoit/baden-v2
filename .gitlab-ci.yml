@@ -81,7 +81,7 @@ firebase:
     key: ${CI_COMMIT_REF_SLUG} # don't share cache between branches
     policy: pull
     paths:
-      - * # pull everything that is in the cache
+      - ./* # pull everything that is in the cache
   script:
     - ionic build --prod
   artifacts:
@@ -100,7 +100,7 @@ deploy:
     key: ${CI_COMMIT_REF_SLUG} # don't share cache between branches
     policy: pull # no need to push the cache
     paths:
-      - *
+      - ./*
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: on_success
