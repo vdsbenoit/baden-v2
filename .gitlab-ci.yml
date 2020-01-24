@@ -83,6 +83,7 @@ firebase:
     paths:
       - ./* # pull everything that is in the cache
   script:
+    - cd frontend
     - ionic build --prod
   artifacts:
     expire_in: 1 day # we do not want to keep these artifacts, they are just needed for the deploy job
