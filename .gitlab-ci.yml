@@ -1,0 +1,116 @@
+stages:
+  - docker
+  - dependencies
+  - build
+  - deploy
+
+docker-build:
+  stage: docker
+  image: docker:latest
+  services:
+    - docker:dind # requirement for docker build
+  rules:
+    - changes: # build if change in Docker ci
+        - docker/ci/*
+      when: always
+    - when: never # else never perform this job
+  script:
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - >
+      docker build
+      -t $CI_REGISTRY_IMAGE:latest
+      ./docker/image
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+.npm-template: &npm-template
+  stage: dependencies
+  image: $CI_REGISTRY_IMAGE:latest
+  cache:
+    key: ${CI_COMMIT_REF_SLUG} # don't share cache between branches
+    paths:
+      - frontend/node_modules/
+      - /usr/local/lib/node_modules/
+
+npm-install:
+  <<: *npm-template
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID != null || $CI_COMMIT_REF_NAME == "master"'
+      when: never # never perform this job on develop, master or merge request
+    - exists: # perform the job if nodes modules exists and there is a change in package.json or package-lock.json
+        - frontend/node_modules
+      changes:
+        - frontend/package.json
+        - frontend/package-lock.json
+      when: on_success
+    - exists: # if node_modules exists and the previous rule did not trigger, skip this job
+        - frontend/node_modules
+      when: never
+    - when: on_success # if none of the previous rules triggered, perform the job
+  script:
+    - cd frontend
+    - npm install
+    - yes | /opt/android-sdk/tools/bin/sdkmanager --licenses || true
+
+npm-ci:
+  <<: *npm-template
+  rules:
+    - if: '$CI_MERGE_REQUEST_ID == null && $CI_COMMIT_REF_NAME != "master"'
+      when: never # never perform this job on a branch
+    - exists: # perform the job if nodes modules exists and there is a change in package.json or package-lock.json
+        - frontend/node_modules
+      changes:
+        - frontend/package.json
+        - frontend/package-lock.json
+      when: on_success
+    - exists: # if node_modules exists and the previous rule did not trigger, skip this job
+        - frontend/node_modules
+      when: never
+    - when: on_success # if none of the previous rules triggered, perform the job
+  script:
+    - cd frontend
+    - npm ci
+    - yes | /opt/android-sdk/tools/bin/sdkmanager --licenses || true
+
+firebase:
+  stage: build
+  image: $CI_REGISTRY_IMAGE:latest
+  rules:
+      - when: on_success # this statement in required not to fall back in the default only: [branch, tags]
+  cache:
+    key: ${CI_COMMIT_REF_SLUG} # don't share cache between branches
+    policy: pull
+    paths:
+      - * # pull everything that is in the cache
+  script:
+    - ionic build --prod
+  artifacts:
+    expire_in: 1 day # we do not want to keep these artifacts, they are just needed for the deploy job
+    paths:
+      - frontend/firestore.indexes.json
+      - frontend/public/
+      - frontend/storage.rules
+      - frontend/www/
+
+# Deploy only if we are on develop or master
+deploy:
+  stage: deploy
+  image: $CI_REGISTRY_IMAGE:latest
+  cache:
+    key: ${CI_COMMIT_REF_SLUG} # don't share cache between branches
+    policy: pull # no need to push the cache
+    paths:
+      - *
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      when: on_success
+  dependencies: ["firebase"] # get the artifact of firebase
+  needs: ["firebase"] # do not wait for other jobs than firebase
+  script:
+    - cd frontend
+    - firebase use default
+    - firebase deploy --token $FIREBASE_TOKEN
+  artifacts:
+    paths:
+      - /root/.npm/_logs/*
+    when: on_failure
