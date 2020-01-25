@@ -4,5 +4,6 @@ export interface User {
    username: string;
    email: string;
    emailVerified: boolean;
-   permissions: object;
+   permissions: string[];
+   inscription: Date;
 }

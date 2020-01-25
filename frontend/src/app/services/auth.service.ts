@@ -116,9 +116,10 @@ export class AuthService {
     const userData: User = {
       uid: user.uid,
       username: username,
-      permissions: null,
+      permissions: [],
       email: user.email,
       emailVerified: user.emailVerified,
+      inscription: new Date(),
     };
     return userRef.set(userData, { merge: true })
       .catch(() => {
