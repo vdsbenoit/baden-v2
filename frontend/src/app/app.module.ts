@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { IonicModule } from '@ionic/angular';
@@ -17,6 +17,7 @@ import {NgxIonicImageViewerModule} from 'ngx-ionic-image-viewer';
 import {AngularFireModule} from '@angular/fire';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {GlobalErrorHandler} from './providers/global-error-handler';
 
 @NgModule({
   imports: [
@@ -35,7 +36,12 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
     AngularFirestoreModule,
   ],
   declarations: [AppComponent],
-  providers: [InAppBrowser, SplashScreen, StatusBar],
+  providers: [
+    InAppBrowser,
+    SplashScreen,
+    StatusBar,
+    { provide: ErrorHandler, useClass: GlobalErrorHandler }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {}

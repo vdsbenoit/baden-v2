@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { PopupService } from './popup.service';
 import {NavController} from '@ionic/angular';
 import {User} from '../interfaces/user';
+import {GlobalErrorHandler} from '../providers/global-error-handler';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,7 @@ export class AuthService {
     public ngZone: NgZone, // NgZone service to remove outside scope warning
     public popup: PopupService,
     private navCtrl: NavController,
+    private errorHandler: GlobalErrorHandler,
   ) {
     /* Saving user data in localstorage when
     logged in and setting up null when logged out */
@@ -83,7 +85,8 @@ export class AuthService {
       .then(() => {
         this.popup.info('Un mail de vérification a été envoyé sur ton adresse');
       }).catch((error) => {
-        // todo: hangle error with stackdriver
+        this.errorHandler.handleError("Cannot send verification mail");
+        this.errorHandler.handleError(error);
         this.popup.error("Un problème est survenu durant l'envoi du mail de vérification");
       });
   }
