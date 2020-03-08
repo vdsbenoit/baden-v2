@@ -50,7 +50,6 @@ npm-install:
   script:
     - cd frontend
     - npm install
-    - yes | /opt/android-sdk/tools/bin/sdkmanager --licenses || true
 
 npm-ci:
   <<: *npm-template
@@ -70,9 +69,8 @@ npm-ci:
   script:
     - cd frontend
     - npm ci
-    - yes | /opt/android-sdk/tools/bin/sdkmanager --licenses || true
 
-firebase:
+ionic build:
   stage: build
   image: $CI_REGISTRY_IMAGE:latest
   rules:
@@ -105,8 +103,8 @@ deploy:
   rules:
     - if: '$CI_COMMIT_REF_NAME == "master"'
       when: on_success
-  dependencies: ["firebase"] # get the artifact of firebase
-  needs: ["firebase"] # do not wait for other jobs than firebase
+  dependencies: ["ionic build"] # get the artifact of ionic build
+  needs: ["ionic build"] # do not wait for other jobs than ionic build
   script:
     - cd frontend
     - firebase use default
