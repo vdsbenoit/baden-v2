@@ -1,0 +1,61 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+
+    <ion-title>Connexion</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="login-logo">
+    <img src="assets/img/Logo-bb-2020.png" alt="Logo Baden Battle">
+  </div>
+
+  <form #loginForm="ngForm" (keyup.enter)="onLogin(loginForm)" novalidate>
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked" color="primary">Email</ion-label>
+        <ion-input [(ngModel)]="emailValue" name="email" type="email" #email="ngModel" autocapitalize="off"
+                   required>
+        </ion-input>
+      </ion-item>
+
+      <ion-text color="danger">
+        <p [hidden]="email.valid || submitted == false" class="ion-padding-start">
+          Email requis
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Password</ion-label>
+        <ion-input [(ngModel)]="passwordValue" name="password" type="password" #password="ngModel" required>
+        </ion-input>
+      </ion-item>
+
+      <ion-text color="danger">
+        <p [hidden]="password.valid || submitted == false" class="ion-padding-start">
+          Mot de passe requis
+        </p>
+      </ion-text>
+
+      <ion-text color="primary" >
+        <p (click)="navigateTo('/forgot-password')" class="ion-padding-start">
+          <u>Mot de passe oublié?</u><br>
+        </p>
+      </ion-text>
+
+    </ion-list>
+
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="navigateTo('/signup')" color="light" expand="block">Inscription</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button (click)="onLogin(loginForm)" type="submit" expand="block">Connexion</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>

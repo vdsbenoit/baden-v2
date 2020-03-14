@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Créer un compte</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <div class="signup-logo">
+    <img src="assets/img/Logo-bb-2020.png" alt="Logo Baden Battle">
+  </div>
+
+  <form #signupForm="ngForm" (keyup.enter)="onSignup(signupForm)" novalidate>
+    <ion-list lines="none">
+      <ion-item>
+        <ion-label position="stacked" color="primary">Email</ion-label>
+        <ion-input [(ngModel)]="emailValue" name="email" type="email" #email="ngModel" autocapitalize="off" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="email.valid || submitted == false" class="ion-padding-start">
+          Email requis
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Totem</ion-label>
+        <ion-input [(ngModel)]="usernameValue" name="username" type="text" #username="ngModel" autocapitalize="off" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="username.valid || submitted == false" class="ion-padding-start">
+          Totem requis
+        </p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="stacked" color="primary">Mot de passe</ion-label>
+        <ion-input [(ngModel)]="passwordValue" name="password" type="password" #password="ngModel" required>
+        </ion-input>
+      </ion-item>
+      <ion-text color="danger">
+        <p [hidden]="password.valid || submitted == false" class="ion-padding-start">
+          Mot de passe requis
+        </p>
+      </ion-text>
+    </ion-list>
+
+    <ion-row>
+      <ion-col>
+        <ion-button (click)="this.navCtrl.navigateBack('/login')" color="light" expand="block">Connexion</ion-button>
+      </ion-col>
+      <ion-col>
+        <ion-button (click)="onSignup(signupForm)" type="submit" expand="block">S'enregistrer</ion-button>
+      </ion-col>
+    </ion-row>
+  </form>
+
+</ion-content>
