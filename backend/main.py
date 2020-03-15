@@ -31,6 +31,21 @@ def main(request):
         Response object using `make_response`
         <http://flask.pocoo.org/docs/1.0/api/#flask.Flask.make_response>.
     """
+    if request.method == 'OPTIONS':
+        # Allows GET requests from any origin with the Content-Type
+        # header and caches preflight response for an 3600s
+        headers = {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Max-Age': '3600'
+        }
+        return '', 204, headers
+
+    # Set CORS headers for the main request
+    headers = {
+        'Access-Control-Allow-Origin': '*'
+    }
     settings.parse()
     db = init_db()
     content_type = request.headers['content-type']
@@ -38,13 +53,17 @@ def main(request):
         request_json = request.get_json(silent=True)
         if request_json and 'target' in request_json:
             if request_json['target'] == "new_schedule":
+                # try:
                 controller.initialization.create_new_db(
                     db,
                     request_json["nb_games"],
                     request_json["nb_circuit"],
                     request_json["categories"],
                 )
-
+                # except Exception as e:
+                #     print(f"Exception occurred: {e}")
+                #     return "Something wrong happened", 500, headers
+                return "DB successfully initialized", 200, headers
         else:
             raise ValueError("JSON is invalid, or missing a 'name' property")
     else:
