@@ -1,0 +1,3 @@
+db:
+  cred_file: cred.json
+  project_id: badenbattle-a0dec

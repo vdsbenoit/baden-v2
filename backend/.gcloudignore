@@ -1,0 +1,8 @@
+.idea/
+venv/
+sandbox.py
+.gitignore
+*.md
+**.pyc
+**/__pychache__/**
+test/
