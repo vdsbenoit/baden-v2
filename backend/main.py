@@ -21,7 +21,7 @@ def init_db():
     return firestore.client()
 
 
-def main(request):
+def backend(request):
     """HTTP Cloud Function.
     Args:
         request (flask.Request): The request object.
@@ -53,18 +53,20 @@ def main(request):
         request_json = request.get_json(silent=True)
         if request_json and 'target' in request_json:
             if request_json['target'] == "new_schedule":
-                # try:
-                controller.initialization.create_new_db(
-                    db,
-                    request_json["nb_games"],
-                    request_json["nb_circuit"],
-                    request_json["categories"],
-                )
-                # except Exception as e:
-                #     print(f"Exception occurred: {e}")
-                #     return "Something wrong happened", 500, headers
+                try:
+                    controller.initialization.create_new_db(
+                        db,
+                        request_json["nb_games"],
+                        request_json["nb_circuit"],
+                        request_json["categories"],
+                    )
+                except Exception as e:
+                    print(f"Exception occurred: {e}")
+                    return "Something wrong happened", 500, headers
                 return "DB successfully initialized", 200, headers
         else:
+            print("JSON is invalid, or missing a 'name' property")
             raise ValueError("JSON is invalid, or missing a 'name' property")
     else:
+        print("Unknown content type: {}".format(content_type))
         raise ValueError("Unknown content type: {}".format(content_type))
