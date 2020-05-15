@@ -6,6 +6,8 @@ Circuit ID are letters
 
 Team IDs are made of letters + numbers
 
+All of them are string values.
+
 ## User
 
 
@@ -41,7 +43,7 @@ Team IDs are made of letters + numbers
 | matches      | list       | Ordered list of match ids                                    |
 | ignore_score | bool       | Do not count this team in the section mean score             |
 
-\* **never** edit manually
+\* do **not** edit manually
 
 ## Match
 

@@ -32,6 +32,9 @@ def create_namedtuple_from_dict(obj):
 
 
 def parse():
+    """
+    Parse each key from the setting.yml file into a namedtuple global variable
+    """
     with open(SETTINGS_FILE, 'r', encoding='utf-8-sig') as f:
         try:
             config = yaml.safe_load(f)
