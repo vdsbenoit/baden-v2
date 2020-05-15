@@ -46,7 +46,9 @@ npm-install:
     - exists: # if node_modules exists and the previous rule did not trigger, skip this job
         - frontend/node_modules
       when: never
-    - when: on_success # if none of the previous rules triggered, perform the job
+    - changes:
+        - frontend/*
+      when: on_success # if none of the previous rules triggered, perform the job
   script:
     - cd frontend
     - npm install
