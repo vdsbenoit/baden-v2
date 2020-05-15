@@ -65,7 +65,9 @@ npm-ci:
     - exists: # if node_modules exists and the previous rule did not trigger, skip this job
         - frontend/node_modules
       when: never
-    - when: on_success # if none of the previous rules triggered, perform the job
+    - changes:
+        - frontend/*
+      when: on_success # if none of the previous rules triggered, perform the job
   script:
     - cd frontend
     - npm ci
@@ -74,7 +76,9 @@ ionic build:
   stage: build
   image: $CI_REGISTRY_IMAGE:latest
   rules:
-      - when: on_success # this statement in required not to fall back in the default only: [branch, tags]
+    - changes:
+        - frontend/*
+      when: on_success # this statement in required not to fall back in the default only: [branch, tags]
   cache:
     key: ${CI_COMMIT_REF_SLUG} # don't share cache between branches
     policy: pull
@@ -92,7 +96,7 @@ ionic build:
       - frontend/www/
 
 # Deploy only if we are on develop or master
-deploy:
+deploy front-end:
   stage: deploy
   image: $CI_REGISTRY_IMAGE:latest
   cache:
@@ -113,3 +117,17 @@ deploy:
     paths:
       - /root/.npm/_logs/*
     when: on_failure
+
+deploy back-end:
+  stage: deploy
+  image: google/cloud-sdk
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "master"'
+      changes:
+        - backend/*
+      when: on_success
+  script:
+    - cd backend
+    - cp $FIRESTORE_CRED cred.json
+    - gcloud auth activate-service-account --key-file $GITLAB_SERVICE_ACCOUNT_KEY
+    - gcloud functions deploy backend
