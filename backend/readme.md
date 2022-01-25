@@ -14,12 +14,17 @@ Atm, there is only one target: `new_schedule`
 
 Clear the collections `games` `matches` & `teams` and create a new schedule. The content of the request must be as follows:
 
-| Key        | Value                   |
-| ---------- | ----------------------- |
-| target     | `new_schedule`          |
-| nb_games   | int: amount of games    |
-| nb_circuit | int: amount of circuits |
-| categories | dict: teams details     |
+| Key        | Value                |
+| ---------- | -------------------- |
+| target     | `new_schedule`       |
+| nb_games   | int: amount of games |
+| categories | dict: teams details  |
+
+The script creates games, matches & teams. It shuffles teams across every circuits but it ensures a team only plays in a single circuit. 
+
+Players from one category never play with players from another category. 
+
+Circuits are defined in the order of the category definitions.
 
 See tests below for more details.
 
