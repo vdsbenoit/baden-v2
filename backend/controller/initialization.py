@@ -242,11 +242,13 @@ def create_new_db(db, nb_games: int, categories: dict):
         total_team_count += cat_team_count
     nb_circuits = total_team_count / (2 * nb_games)
     if nb_circuits != abs(nb_circuits):
-        raise Exception("The circuit amount ({}) must be an integer.".format(nb_circuits))
+        raise Exception(f"The circuit amount ({nb_circuits}) must be an integer.")
+    nb_circuits = int(nb_circuits)
     if nb_circuits < 1:
-        raise Exception("The circuit amount ({}) must be greater than 0".format(nb_circuits))
+        raise Exception(f"The circuit amount ({nb_circuits}) must be greater than 0")
     if nb_circuits > 26:
-        raise Exception("The circuit amount ({}) must be lower than 26".format(nb_circuits))
+        raise Exception(f"The circuit amount ({nb_circuits}) must be lower than 26")
+    print(f"{nb_circuits} circuits will be created")
 
     _create_schedule(db, nb_games, nb_circuits)
     _create_teams(db, categories, nb_games)
