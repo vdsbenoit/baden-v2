@@ -204,13 +204,12 @@ def validate_game_collection(db, nb_games, nb_circuits):
     print("DB validated with success")
 
 
-def create_new_db(db, nb_games: int, nb_circuits: int, categories: dict):
+def create_new_db(db, nb_games: int, categories: dict):
     """
     Generate a new schedule and save it in the DB
     Beware: it erases the previous teams, games & matches collections
     :param db: a Firestore db object
     :param nb_games: amount of games per circuit (amount of matches == amount of teams)
-    :param nb_circuits: amount of circuits
     :param categories: category dict made of dicts made of section names & team amounts
         example:
             categories:
@@ -229,12 +228,25 @@ def create_new_db(db, nb_games: int, nb_circuits: int, categories: dict):
         raise Exception("The game amount must higher than 0")
     if nb_games != abs(nb_games):
         raise Exception("The game amount must be an integer")
+    total_team_count = 0
+    for category_name, sections in categories.items():
+        cat_team_count = 0
+        section = None
+        for section in sections:
+            cat_team_count += section["teams"]
+        if cat_team_count % (2 * nb_games) != 0:
+            raise Exception(
+                "The total amount of teams in a category must be a multiple of the double fo the amount of games.\n"
+                "{} has {} teams, which is not a multiple of {}".format(section["name"], cat_team_count, 2 * nb_games)
+            )
+        total_team_count += cat_team_count
+    nb_circuits = total_team_count / (2 * nb_games)
     if nb_circuits != abs(nb_circuits):
-        raise Exception("The circuit amount must be an integer")
+        raise Exception("The circuit amount ({}) must be an integer.".format(nb_circuits))
     if nb_circuits < 1:
-        raise Exception("The circuit amount must be greater than 0")
+        raise Exception("The circuit amount ({}) must be greater than 0".format(nb_circuits))
     if nb_circuits > 26:
-        raise Exception("The circuit amount must be lower than 26")
+        raise Exception("The circuit amount ({}) must be lower than 26".format(nb_circuits))
 
     _create_schedule(db, nb_games, nb_circuits)
     _create_teams(db, categories, nb_games)

@@ -57,7 +57,6 @@ def backend(request):
                     controller.initialization.create_new_db(
                         db,
                         request_json["nb_games"],
-                        request_json["nb_circuit"],
                         request_json["categories"],
                     )
                 except Exception as e:
