@@ -13,3 +13,10 @@ csv:
     category: Section
     nb_teams: Equipes
     nb_players: Total par équipe
+firestore:
+  teams_collection   : teams
+  games_collection   : games
+  matches_collection : matches
+  sections_collection: sections
+  settings_collection: settings
+  settings_document  : app

@@ -14,12 +14,6 @@ from model.section import Section
 from model.team import Team
 
 ALPHABET = [chr(s) for s in range(65, 91)]
-TEAMS_COLLECTION    = "teams"
-GAMES_COLLECTION    = "games"
-MATCHES_COLLECTION  = "matches"
-SECTIONS_COLLECTION = "sections"
-SETTINGS_COLLECTION = "settings"
-SETTINGS_DOCUMENT   = "app"
 
 
 def get_letter(iterator):
@@ -59,8 +53,8 @@ def _create_teams(db, categories: dict, nb_games: int):
     section_iterator = 1  # must start at 1 as we do not want to have a team 0
 
     # Clear DB
-    print(f"Clear '{TEAMS_COLLECTION}' collection...")
-    util.delete_collection(db.collection(TEAMS_COLLECTION), 200)
+    print(f"Clear '{settings.firestore.teams_collection}' collection...")
+    util.delete_collection(db.collection(settings.firestore.teams_collection), 200)
 
     for category_name, sections in categories.items():
         category_teams = list()
@@ -86,7 +80,7 @@ def _create_teams(db, categories: dict, nb_games: int):
     batch = db.batch()
     for team in all_teams:
         # get the matches for this team ordered in time
-        for match in db.collection(MATCHES_COLLECTION).where("player_numbers", "array_contains", team.number).order_by("time").stream():
+        for match in db.collection(settings.firestore.matches_collection).where("player_numbers", "array_contains", team.number).order_by("time").stream():
             # add the team id in the match entry (only possible after shuffle)
             match.reference.update({"player_ids": firestore.ArrayUnion([team.id])})
             # add the match id to the team attributes
@@ -95,7 +89,7 @@ def _create_teams(db, categories: dict, nb_games: int):
             len(team.matches) == nb_games
         ), f"Incorrect amount of matches for team {team.id}: {len(team.matches)} vs {nb_games})"
         # save the team
-        batch.set(db.collection(TEAMS_COLLECTION).document(team.id), team.to_dict())
+        batch.set(db.collection(settings.firestore.teams_collection).document(team.id), team.to_dict())
     batch.commit()
 
 
@@ -109,15 +103,15 @@ def _create_sections(db, csv_data):
     categories = dict()
 
     # Clear DB
-    print(f"Clear '{SECTIONS_COLLECTION}' collection...")
-    util.delete_collection(db.collection(SECTIONS_COLLECTION), 200)
+    print(f"Clear '{settings.firestore.sections_collection}' collection...")
+    util.delete_collection(db.collection(settings.firestore.sections_collection), 200)
 
     batch = db.batch()
 
     # process data from csv file
     for section_data in csv_data:
         # Get an id for the section
-        doc_ref = db.collection(SECTIONS_COLLECTION).document()
+        doc_ref = db.collection(settings.firestore.sections_collection).document()
         section_id = doc_ref.id
         category = section_data[settings.csv.headers.category]
 
@@ -140,7 +134,10 @@ def _create_sections(db, csv_data):
         batch.set(doc_ref, section.to_dict())
 
     # Update app settings with the categories list
-    batch.update(db.collection(SETTINGS_COLLECTION).document(SETTINGS_DOCUMENT), {"categories": list(categories.keys())})
+    batch.update(
+        db.collection(settings.firestore.settings_collection).document(settings.firestore.settings_document),
+        {"categories": list(categories.keys())}
+    )
     batch.commit()
     return categories
 
@@ -150,10 +147,10 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
     Generate a new schedule and save it in the DB
     """
     # Clear db
-    print(f"Clear '{MATCHES_COLLECTION}' collection...")
-    util.delete_collection(db.collection(MATCHES_COLLECTION), 200)
-    print(f"Clear '{GAMES_COLLECTION}' collection...")
-    util.delete_collection(db.collection(GAMES_COLLECTION), 200)
+    print(f"Clear '{settings.firestore.matches_collection}' collection...")
+    util.delete_collection(db.collection(settings.firestore.matches_collection), 200)
+    print(f"Clear '{settings.firestore.games_collection}' collection...")
+    util.delete_collection(db.collection(settings.firestore.games_collection), 200)
 
     for circuit_idx in range(nb_circuits):
         circuit_id = chr(circuit_idx + 65)
@@ -186,13 +183,13 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
                 match.player_numbers.append(team)
 
             for match in matches.values():
-                match_ref = db.collection(MATCHES_COLLECTION).document(match.id)
+                match_ref = db.collection(settings.firestore.matches_collection).document(match.id)
                 match_ref.set(match.to_dict())
 
         print(f"Save circuit {circuit_id} games in the DB")
         batch = db.batch()
         for game_id, game in games.items():
-            batch.set(db.collection(GAMES_COLLECTION).document(str(game_id)), game.to_dict())
+            batch.set(db.collection(settings.firestore.games_collection).document(str(game_id)), game.to_dict())
         batch.commit()
 
 
@@ -210,7 +207,7 @@ def validate_game_collection(db, nb_games, nb_circuits):
     for time in range(1, nb_games + 1):
         print(f"Validate matches collection for time {time}...")
         player_list = list()
-        for m in db.collection(MATCHES_COLLECTION).where("time", "==", time).stream():
+        for m in db.collection(settings.firestore.matches_collection).where("time", "==", time).stream():
             players = m.to_dict()["player_ids"]
             players_set = {players[0], players[1]}
             assert (
@@ -234,14 +231,14 @@ def validate_game_collection(db, nb_games, nb_circuits):
 
     print("Validate games collection")
     hash_list = list()
-    for g in db.collection(GAMES_COLLECTION).stream():
+    for g in db.collection(settings.firestore.games_collection).stream():
         print(f"Validate game {g.id}...")
         game_hash = g.to_dict()["hash"]
         assert game_hash not in hash_list, "Hash {} is used twice".format(game_hash)
         hash_list.append(game_hash)
 
         player_list = list()
-        for m in db.collection(MATCHES_COLLECTION).where("game_id", "==", g.id).stream():
+        for m in db.collection(settings.firestore.matches_collection).where("game_id", "==", g.id).stream():
             players = m.to_dict()["player_ids"]
             assert (
                 players[0] not in player_list
