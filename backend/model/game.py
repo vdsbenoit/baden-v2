@@ -7,7 +7,8 @@ class Game:
         self.hash = hashlib.sha1(f"Baden {id} Battle".encode()).hexdigest()
         self.circuit = circuit
         self.name = ""
-        self.leaders = list()
+        self.morningLeaders = list()
+        self.afternoonLeaders = list()
         self.matches = list()
         self.weight = 1
 

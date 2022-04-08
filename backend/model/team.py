@@ -9,7 +9,8 @@ class Team:
         self.category = category
         self.hash = hashlib.sha1(f"Baden {id} Battle".encode()).hexdigest()
         self.matches = list()
-        self.ignore_score = False
+        self.ignoreScore = False
+        self.scores = list()
 
     def to_dict(self):
         return self.__dict__
