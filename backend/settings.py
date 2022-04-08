@@ -6,6 +6,7 @@ from collections import namedtuple, OrderedDict
 PROJECT_ROOT = abspath(dirname(__file__))
 SETTINGS_FILE = join(PROJECT_ROOT, "settings.yml")
 db = None
+csv = None
 
 
 def create_namedtuple_from_dict(obj):

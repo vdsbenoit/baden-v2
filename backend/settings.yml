@@ -1,3 +1,14 @@
-db:
+.db:
   cred_file: cred.json
   project_id: badenbattle-a0dec
+db:
+  cred_file: cred-dev.json
+  project_id: mailmerge-59e91
+csv:
+  delimiter: ";"
+  headers:
+    name: Nom
+    city: Localité
+    unit: Unité
+    category: Section
+    nb_teams: Equipes

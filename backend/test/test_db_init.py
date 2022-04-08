@@ -22,6 +22,11 @@ TEST_REQUEST = {
     }
 }
 
+###########################################################
+#         THESE TESTS ARE CURRENTLY OBSOLETE              #
+# They are based on the previous API (before using a csv) #
+###########################################################
+
 
 def test_no_args():
     assert TRIGGER_URL is not ""
