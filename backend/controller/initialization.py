@@ -128,7 +128,8 @@ def _create_sections(db, csv_data):
             section_data[settings.csv.headers.city],
             section_data[settings.csv.headers.unit],
             section_data[settings.csv.headers.category],
-            int(section_data[settings.csv.headers.nb_teams])
+            int(section_data[settings.csv.headers.nb_teams]),
+            int(section_data[settings.csv.headers.nb_players]),
         )
 
         # Insert the section object in the categories dict

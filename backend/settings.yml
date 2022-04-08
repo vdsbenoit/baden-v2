@@ -12,3 +12,4 @@ csv:
     unit: Unité
     category: Section
     nb_teams: Equipes
+    nb_players: Total par équipe

@@ -11,6 +11,7 @@ class Team:
         self.sectionName = section.name
         self.city = section.city
         self.category = section.category
+        self.nbPlayers = section.nbPlayers
         self.hash = hashlib.sha1(f"Baden {id} Battle".encode()).hexdigest()
         self.matches = list()
         self.ignoreScore = False
