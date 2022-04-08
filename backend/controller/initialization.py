@@ -22,13 +22,13 @@ SETTINGS_COLLECTION = "settings"
 SETTINGS_DOCUMENT   = "app"
 
 
-def get_team_letter(iterator):
+def get_letter(iterator):
     if iterator < 26:
         return ALPHABET[iterator]
     else:
         return "{}{}".format(
             ALPHABET[int(iterator/26) - 1],
-            get_team_letter(iterator % 26)
+            get_letter(iterator % 26)
         )
 
 
@@ -56,7 +56,7 @@ def _create_teams(db, categories: dict, nb_games: int):
     Update matches entries in the DB with the team ids
     """
     all_teams = list()
-    letter_iterator = 0
+    section_iterator = 1  # must start at 1 as we do not want to have a team 0
 
     # Clear DB
     print(f"Clear '{TEAMS_COLLECTION}' collection...")
@@ -68,10 +68,10 @@ def _create_teams(db, categories: dict, nb_games: int):
 
         section: Section
         for section in sections:
-            for i in range(section.nbTeams):
-                team_id = "{}{}".format(get_team_letter(letter_iterator), i + 1)
+            for team_iterator in range(section.nbTeams):
+                team_id = "{}{}".format(section_iterator, get_letter(team_iterator))
                 category_teams.append(Team(team_id, section))
-            letter_iterator += 1
+            section_iterator += 1
 
         if len(category_teams) % (2 * nb_games) != 0:
             raise Exception("The amount of teams in a category must be a multiple of the double of the amount of games")
