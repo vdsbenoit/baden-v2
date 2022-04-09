@@ -52,20 +52,28 @@ def backend(request):
     if content_type == 'application/json':
         request_json = request.get_json(silent=True)
         if request_json and 'target' in request_json:
-            if request_json['target'] == "new_schedule":
-                try:
+            try:
+
+                # Definition of the cloud function targets
+                if request_json['target'] == "init_db":
+                    #  todo: fix this call
                     controller.initialization.create_new_db(
                         db,
                         request_json["nb_games"],
                         request_json["categories"],
                     )
-                except Exception as e:
-                    print(f"Exception occurred: {e}")
-                    return "Something wrong happened", 500, headers
-                return "DB successfully initialized", 200, headers
+                elif request_json['target'] == "badges":
+                    pass  # todo: add badge function call here
+                else:
+                    raise Exception(f"Unknown target: {request_json['target']}")
+
+            except Exception as e:
+                print(f"Exception occurred: {e}")
+                return "Something wrong happened", 500, headers
+            return "The cloud function operated with success", 200, headers
         else:
-            print("JSON is invalid, or missing a 'name' property")
-            raise ValueError("JSON is invalid, or missing a 'name' property")
+            print("JSON is invalid, or missing a 'target' property")
+            raise ValueError("JSON is invalid, or missing a 'target' property")
     else:
         print("Unknown content type: {}".format(content_type))
         raise ValueError("Unknown content type: {}".format(content_type))

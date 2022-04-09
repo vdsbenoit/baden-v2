@@ -8,9 +8,12 @@ The backend is made of one single function called `backend`. However, several ac
 
 ### Targets
 
-Atm, there is only one target: `new_schedule`
+There are currently two targets:
 
-#### New schedule
+- `init_db`
+- `badges`
+
+#### init_db
 
 Clear the collections `games` `matches` & `teams` and create a new schedule. The content of the request must be as follows:
 
@@ -36,6 +39,10 @@ Data is loaded from the file located in `csv_path`. This file must observe these
 The delimiter of the csv file can be defined is the `settings.yml` file.
 
 See tests below for more details.
+
+#### badges
+
+
 
 ## Setup
 

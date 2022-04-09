@@ -2,3 +2,9 @@ firebase_admin
 flask
 mock
 pyyaml
+
+# Badges
+fpdf
+numpy
+Pillow
+more-itertools

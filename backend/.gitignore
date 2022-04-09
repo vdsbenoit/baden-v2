@@ -5,3 +5,4 @@ cred-dev.json
 __pycache__/
 *.py[cod]
 *$py.class
+badges.pdf

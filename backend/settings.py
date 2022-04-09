@@ -5,6 +5,8 @@ from collections import namedtuple, OrderedDict
 
 PROJECT_ROOT = abspath(dirname(__file__))
 SETTINGS_FILE = join(PROJECT_ROOT, "settings.yml")
+
+# These global variables are populated by the parse() function and are accessible in other modules
 db = None
 csv = None
 firestore = None
@@ -48,4 +50,3 @@ def parse():
 
     for k, v in config.items():
         globals()[k] = create_namedtuple_from_dict(v)
-
