@@ -80,7 +80,7 @@ def _create_teams(db, categories: dict, nb_games: int):
     batch = db.batch()
     for team in all_teams:
         # get the matches for this team ordered in time
-        for match in db.collection(settings.firestore.matches_collection).where("player_numbers", "array_contains", team.number).order_by("time").stream():
+        for match in db.collection(settings.firestore.matches_collection).order_by("time").where("player_numbers", "array_contains", team.number).stream():
             # add the team id in the match entry (only possible after shuffle)
             match.reference.update({"player_ids": firestore.ArrayUnion([team.id])})
             # add the match id to the team attributes
@@ -146,6 +146,7 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
     """
     Generate a new schedule and save it in the DB
     """
+    circuit_ids = list()
     # Clear db
     print(f"Clear '{settings.firestore.matches_collection}' collection...")
     util.delete_collection(db.collection(settings.firestore.matches_collection), 200)
@@ -154,6 +155,7 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
 
     for circuit_idx in range(nb_circuits):
         circuit_id = chr(circuit_idx + 65)
+        circuit_ids.append(circuit_id)
         teams = [i for i in range(1 + (nb_games * 2 * circuit_idx), 1 + nb_games * 2 * (circuit_idx + 1))]
         first_game = circuit_idx * nb_games + 1
         last_game = (circuit_idx + 1) * nb_games
@@ -171,13 +173,13 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
         print(f"Define matches for circuit {circuit_id}...")
         for i in range(nb_games):  # iterate over each times in the schedule (same value as nb_games)
             matches = dict()
-            time = i + 1
+            t = i + 1
             for j, game_id in enumerate(game_2ways_range):
                 team = teams[(j + i * 2) % (2 * nb_games)]
                 if game_id in matches:
                     match = matches[game_id]
                 else:
-                    match = Match(str(uuid.uuid4().fields[-1]), str(game_id), time)
+                    match = Match(str(uuid.uuid4().fields[-1]), str(game_id), t)
                     matches[game_id] = match
                     games[game_id].matches.append(match.id)
                 match.player_numbers.append(team)
@@ -190,6 +192,11 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
         batch = db.batch()
         for game_id, game in games.items():
             batch.set(db.collection(settings.firestore.games_collection).document(str(game_id)), game.to_dict())
+        # Update app settings with the circuit names list
+        batch.update(
+            db.collection(settings.firestore.settings_collection).document(settings.firestore.settings_document),
+            {"circuits": circuit_ids}
+        )
         batch.commit()
 
 

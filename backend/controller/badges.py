@@ -158,7 +158,7 @@ def generate_badges(db, target_pdf_path):
     for section in db.collection(settings.firestore.sections_collection).stream():
         print("Generating badges for {}".format(section.to_dict()["name"]))
         colored_badge, color = create_design(section.id)
-        for team in db.collection(settings.firestore.teams_collection).where('sectionId', '==', section.id).order_by("id").stream():
+        for team in db.collection(settings.firestore.teams_collection).order_by("id").where('sectionId', '==', section.id).stream():
             nb_players = team.to_dict()["nbPlayers"]
             team_badge = add_team_id(colored_badge, team.id, color)
             for i in range(nb_players):
