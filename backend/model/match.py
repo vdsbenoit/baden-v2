@@ -4,8 +4,6 @@ class Match:
         self.game_id = game_id
         self.time = time
         self.game_name = ""
-        self.start_time = ""
-        self.stop_time = ""
         self.player_ids = list()
         self.player_numbers = list()
         self.winner = ""
