@@ -56,15 +56,22 @@ def _create_teams(db, categories: dict, nb_games: int):
     print(f"Clear '{settings.firestore.teams_collection}' collection...")
     util.delete_collection(db.collection(settings.firestore.teams_collection), 200)
 
+    section_batch = db.batch()
     for category_name, sections in categories.items():
         category_teams = list()
         print(f"Create {category_name} teams...")
 
         section: Section
         for section in sections:
+            section_team_ids = list()
             for team_iterator in range(section.nbTeams):
                 team_id = "{}{}".format(section_iterator, get_letter(team_iterator))
                 category_teams.append(Team(team_id, section))
+                section_team_ids.append(team_id)
+            section_batch.update(
+                db.collection(settings.firestore.sections_collection).document(section.id),
+                {"teams": section_team_ids}
+            )
             section_iterator += 1
 
         if len(category_teams) % (2 * nb_games) != 0:
@@ -74,10 +81,14 @@ def _create_teams(db, categories: dict, nb_games: int):
 
         all_teams.extend(category_teams)
 
+    print("Update 'teams' lists in the {} collection".format(settings.firestore.sections_collection))
+    section_batch.commit()
+    print("'teams' lists updated in the {} collection".format(settings.firestore.sections_collection))
+
     print("FireStore needs to update its indexes. Let's wait a little...")
     time.sleep(60)
-    print("Save teams in the DB...")
-    batch = db.batch()
+    print("Saving teams to the DB...")
+    team_batch = db.batch()
     for team in all_teams:
         # get the matches for this team ordered in time
         for match in db.collection(settings.firestore.matches_collection).order_by("time").where("player_numbers", "array_contains", team.number).stream():
@@ -89,8 +100,9 @@ def _create_teams(db, categories: dict, nb_games: int):
             len(team.matches) == nb_games
         ), f"Incorrect amount of matches for team {team.id}: {len(team.matches)} vs {nb_games})"
         # save the team
-        batch.set(db.collection(settings.firestore.teams_collection).document(team.id), team.to_dict())
-    batch.commit()
+        team_batch.set(db.collection(settings.firestore.teams_collection).document(team.id), team.to_dict())
+    team_batch.commit()
+    print("Teams saved to the DB")
 
 
 def _create_sections(db, csv_data):
@@ -139,6 +151,7 @@ def _create_sections(db, csv_data):
         {"categories": list(categories.keys())}
     )
     batch.commit()
+    print("New sections created")
     return categories
 
 
@@ -188,7 +201,7 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
                 match_ref = db.collection(settings.firestore.matches_collection).document(match.id)
                 match_ref.set(match.to_dict())
 
-        print(f"Save circuit {circuit_id} games in the DB")
+        print(f"Saving circuit {circuit_id} games to the DB")
         batch = db.batch()
         for game_id, game in games.items():
             batch.set(db.collection(settings.firestore.games_collection).document(str(game_id)), game.to_dict())
@@ -198,6 +211,7 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
             {"circuits": circuit_ids}
         )
         batch.commit()
+        print(f"Circuit {circuit_id} games added to the DB")
 
 
 def validate_game_collection(db, nb_games, nb_circuits):
@@ -276,6 +290,10 @@ def create_new_db(db, nb_games: int, csv_path: str):
     :param csv_path: path to the csv files with the game data. This file must have headers that matches the 
                      values of the csv.headers settings in settings.yml
     """
+    answer = input("This operation is going to clear the database. Enter 'yes' to continue")
+    if answer != "yes":
+        print("Answer is not 'yes', aborting")
+        exit(0)
     if nb_games % 2 == 0:
         raise Exception("The game amount must be a odd value")
     if nb_games < 1:
