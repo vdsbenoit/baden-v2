@@ -6,7 +6,7 @@ from random import randint
 from google.cloud import firestore
 
 import settings
-from controller.tools import parse_csv
+from controller.tools import parse_csv, parse_game_names
 from model import util
 from model.game import Game
 from model.match import Match
@@ -155,7 +155,7 @@ def _create_sections(db, csv_data):
     return categories
 
 
-def _create_schedule(db, nb_games: int, nb_circuits: int):
+def _create_schedule(db, nb_games: int, nb_circuits: int, game_names=None):
     """
     Generate a new schedule and save it in the DB
     """
@@ -180,7 +180,8 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
         games = dict()
         for i in range(1, nb_games + 1):
             game_id = (circuit_idx * nb_games) + i
-            games[game_id] = Game(str(game_id), circuit_id)
+            game_name = game_names[game_id-1] if game_names else ""
+            games[game_id] = Game(game_id, circuit_id, game_name)
 
         # Create matches
         print(f"Define matches for circuit {circuit_id}...")
@@ -202,15 +203,15 @@ def _create_schedule(db, nb_games: int, nb_circuits: int):
                 match_ref.set(match.to_dict())
 
         print(f"Saving circuit {circuit_id} games to the DB")
-        batch = db.batch()
+        circuit_batch = db.batch()
         for game_id, game in games.items():
-            batch.set(db.collection(settings.firestore.games_collection).document(str(game_id)), game.to_dict())
+            circuit_batch.set(db.collection(settings.firestore.games_collection).document(str(game_id)), game.to_dict())
         # Update app settings with the circuit names list
-        batch.update(
+        circuit_batch.update(
             db.collection(settings.firestore.settings_collection).document(settings.firestore.settings_document),
             {"circuits": circuit_ids}
         )
-        batch.commit()
+        circuit_batch.commit()
         print(f"Circuit {circuit_id} games added to the DB")
 
 
@@ -281,7 +282,7 @@ def validate_game_collection(db, nb_games, nb_circuits):
     print("DB validated with success")
 
 
-def create_new_db(db, nb_games: int, csv_path: str):
+def create_new_db(db, nb_games: int, csv_path: str, game_names_path=""):
     """
     Generate a new schedule and save it in the DB
     Beware: it erases the previous teams, games & matches collections
@@ -289,6 +290,7 @@ def create_new_db(db, nb_games: int, csv_path: str):
     :param nb_games: amount of games per circuit (amount of matches == amount of teams)
     :param csv_path: path to the csv files with the game data. This file must have headers that matches the 
                      values of the csv.headers settings in settings.yml
+    :param game_names_path path the the file with the game names
     """
     answer = input(f"This operation is going to clear the {settings.db.project_id} database. Enter 'yes' to continue\n")
     if answer != "yes":
@@ -304,6 +306,8 @@ def create_new_db(db, nb_games: int, csv_path: str):
 
     # read data from csv
     csv_data = parse_csv(csv_path)
+    # read data game file
+    game_names = parse_game_names(game_names_path) if game_names_path else None
     # process data from csv
     categories = _create_sections(db, csv_data)
     # check categories & sections data
@@ -327,6 +331,6 @@ def create_new_db(db, nb_games: int, csv_path: str):
     if nb_circuits > 26:
         raise Exception(f"The circuit amount ({nb_circuits}) must be lower than 26")
     print(f"{nb_circuits} circuits will be created")
-    _create_schedule(db, nb_games, nb_circuits)
+    _create_schedule(db, nb_games, nb_circuits, game_names)
     _create_teams(db, categories, nb_games)
     validate_game_collection(db, nb_games, nb_circuits)

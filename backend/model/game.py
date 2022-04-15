@@ -2,11 +2,11 @@ import hashlib
 
 
 class Game:
-    def __init__(self, id: str, circuit: str):
-        self.id = str(id)
-        self.hash = hashlib.sha1(f"Baden {id} Battle".encode()).hexdigest()
+    def __init__(self, game_id: int, circuit: str, name: str):
+        self.id = game_id
+        self.hash = hashlib.sha1(f"Baden {game_id} Battle".encode()).hexdigest()
         self.circuit = circuit
-        self.name = ""
+        self.name = name
         self.morningLeaders = list()
         self.afternoonLeaders = list()
         self.matches = list()
