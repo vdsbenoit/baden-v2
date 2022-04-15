@@ -290,7 +290,7 @@ def create_new_db(db, nb_games: int, csv_path: str):
     :param csv_path: path to the csv files with the game data. This file must have headers that matches the 
                      values of the csv.headers settings in settings.yml
     """
-    answer = input("This operation is going to clear the database. Enter 'yes' to continue")
+    answer = input(f"This operation is going to clear the {settings.db.project_id} database. Enter 'yes' to continue\n")
     if answer != "yes":
         print("Answer is not 'yes', aborting")
         exit(0)
