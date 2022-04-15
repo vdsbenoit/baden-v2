@@ -16,6 +16,7 @@ class Team:
         self.matches = list()
         self.ignoreScore = False
         self.scores = list()
+        self.score = 0
 
     def to_dict(self):
         return self.__dict__
