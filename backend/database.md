@@ -48,7 +48,7 @@ All of them are string values.
 ## Match
 
 | Key            | Definition | Description                       |
-| -------------- | ---------- | --------------------------------- |
+|----------------| ---------- | --------------------------------- |
 | id             | str        | Unique id                         |
 | game_id        | str        | Game ID                           |
 | time           | int        | Index in the schedule             |
@@ -58,7 +58,7 @@ All of them are string values.
 | player_numbers | list       | Players number (not id)           |
 | winner         | str        | Winner code                       |
 | loser          | str        | Loser code                        |
-| even           | bool       | True if evenly won                |
+| draw           | bool       | True if evenly won                |
 | reporter       | str        | Name of the reporter of the score |
 
 ## Settings

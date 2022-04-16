@@ -7,7 +7,7 @@ class Match:
         self.player_numbers = list()
         self.winner = ""
         self.loser = ""
-        self.even = False
+        self.draw = False
         self.reporter = ""
 
     def to_dict(self):
