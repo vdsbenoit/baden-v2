@@ -193,7 +193,7 @@ def _create_schedule(db, nb_games: int, nb_circuits: int, game_names=None):
                 if game_id in matches:
                     match = matches[game_id]
                 else:
-                    match = Match(str(uuid.uuid4().fields[-1]), str(game_id), t)
+                    match = Match(str(uuid.uuid4().fields[-1]), game_id, t)
                     matches[game_id] = match
                     games[game_id].matches.append(match.id)
                 match.player_numbers.append(team)

@@ -1,5 +1,5 @@
 class Match:
-    def __init__(self, id: str, game_id: str, time):
+    def __init__(self, id: str, game_id: int, time):
         self.id = id
         self.game_id = game_id
         self.time = time
