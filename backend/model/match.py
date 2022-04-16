@@ -3,7 +3,6 @@ class Match:
         self.id = id
         self.game_id = game_id
         self.time = time
-        self.game_name = ""
         self.player_ids = list()
         self.player_numbers = list()
         self.winner = ""
