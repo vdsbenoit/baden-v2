@@ -15,7 +15,6 @@ class Team:
         self.hash = hashlib.sha1(f"Baden {id} Battle".encode()).hexdigest()
         self.matches = list()
         self.ignoreScore = False
-        self.scores = list()
         self.score = 0
 
     def to_dict(self):

@@ -8,7 +8,6 @@ class Section:
         self.nbTeams = nb_teams
         self.nbPlayers = nb_players
         self.teams = list()
-        self.scores = list()
         self.score = 0
 
     def to_dict(self):
