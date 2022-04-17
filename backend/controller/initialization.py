@@ -262,7 +262,7 @@ def validate_game_collection(db, nb_games, nb_circuits):
         hash_list.append(game_hash)
 
         player_list = list()
-        for m in db.collection(settings.firestore.matches_collection).where("game_id", "==", g.id).stream():
+        for m in db.collection(settings.firestore.matches_collection).where("game_id", "==", int(g.id)).stream():
             players = m.to_dict()["player_ids"]
             assert (
                 players[0] not in player_list
