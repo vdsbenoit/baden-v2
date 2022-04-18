@@ -21,4 +21,5 @@ firestore:
   matches_collection : matches
   sections_collection: sections
   settings_collection: settings
+  profiles_collection: users
   settings_document  : app

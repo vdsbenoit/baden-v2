@@ -10,7 +10,7 @@ import settings
 __author__ = 'Benoit Vander Stappen'
 
 
-def init_db():
+def init_api():
     if settings.db.cred_file:
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = settings.db.cred_file
     # cloud environment
@@ -18,7 +18,6 @@ def init_db():
     firebase_admin.initialize_app(cred, {
         'projectId': settings.db.project_id,
     })
-    return firestore.client()
 
 
 def backend(request):
@@ -47,7 +46,8 @@ def backend(request):
         'Access-Control-Allow-Origin': '*'
     }
     settings.parse()
-    db = init_db()
+    init_api()
+    db = firestore.client()
     content_type = request.headers['content-type']
     if content_type == 'application/json':
         request_json = request.get_json(silent=True)
