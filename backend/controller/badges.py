@@ -61,13 +61,17 @@ def replace_color(image: str, from_color: tuple, to_color: tuple):
     im.save(image)
 
 
-def create_design(name: str):
+def create_design(name: str, colors=None):
     global color_pair_index
     tmpdir = tempfile.gettempdir()
     path = os.path.join(tmpdir, f"badge-{name}.png")
     shutil.copyfile(BASE_IMAGE, path)
-    foreground_color = ImageColor.getcolor(COLOR_PAIRS[color_pair_index][0], "RGB")
-    background_color = ImageColor.getcolor(COLOR_PAIRS[color_pair_index][1], "RGB")
+    if colors:
+        foreground_color = ImageColor.getcolor(colors[0], "RGB")
+        background_color = ImageColor.getcolor(colors[1], "RGB")
+    else:
+        foreground_color = ImageColor.getcolor(COLOR_PAIRS[color_pair_index][0], "RGB")
+        background_color = ImageColor.getcolor(COLOR_PAIRS[color_pair_index][1], "RGB")
     replace_color(path, WHITE, foreground_color)
     replace_color(path, BLACK, background_color)
     color_pair_index += 1
@@ -76,7 +80,7 @@ def create_design(name: str):
     return path, foreground_color
 
 
-def add_team_id(image: str, team_id: str, text_color: tuple):
+def add_team_id(image: str, team_id: str, text_color: tuple, index=0):
     """
     Credits https://stackoverflow.com/a/1970930/7709964
             https://stackoverflow.com/a/4902713/7709964
@@ -84,12 +88,14 @@ def add_team_id(image: str, team_id: str, text_color: tuple):
         image: path to the source image
         team_id: the text to be added to the badge
         text_color: text foreground color (r,g,b)
+        index: this value is used to name the target file
+            it must be different every time the function is called if the team_id is the same
 
     Returns:
 
     """
     tmpdir = tempfile.gettempdir()
-    path = os.path.join(tmpdir, f"badge-{team_id}.png")
+    path = os.path.join(tmpdir, f"badge-{team_id}-{index}.png")
 
     im = Image.open(image)
     im = im.convert('RGBA')
@@ -170,3 +176,44 @@ def generate_badges(db, target_pdf_path):
     print("Let's put all this in a pdf")
     create_pdf(badge_list, target_pdf_path)
     print("Done!")
+
+
+def generate_missing_badges(sections, target_pdf_path):
+    """
+    Generate the badge for section who added players after the deadline
+    Args:
+        sections: a list made of dict with the following keys: teams (list), colors (list), amount (int)
+        target_pdf_path: target file
+    """
+    badge_list = list()
+    for sectionId, section in enumerate(sections):
+        colored_badge, color = create_design(str(sectionId), section["colors"])
+        for teamId in section["teams"]:
+            print("Generating badges for {}".format(teamId))
+            team_badge = add_team_id(colored_badge, teamId, color)
+            for i in range(section["amount"]):
+                badge_list.append(team_badge)
+    print("Let's put all this in a pdf")
+    create_pdf(badge_list, target_pdf_path)
+    print("Done!")
+
+
+def generate_team_bb_badges(nb_design, nb_badge_per_design, target_pdf_path):
+    """
+    Generate the badge for section who added players after the deadline
+    Args:
+        nb_design: amount of different designs (int)
+        nb_badge_per_design: amount of badge per designs (int)
+        target_pdf_path: target file
+    """
+    badge_list = list()
+    for design in range(nb_design):
+        colored_badge, color = create_design(str(design))
+        print("Generating badges {}".format(design))
+        team_badge = add_team_id(colored_badge, "STAFF", color, design)
+        for badge in range(nb_badge_per_design):
+            badge_list.append(team_badge)
+    print("Let's put all this in a pdf")
+    create_pdf(badge_list, target_pdf_path)
+    print("Done!")
+

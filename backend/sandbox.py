@@ -4,7 +4,7 @@ from firebase_admin import firestore
 import controller.initialization
 import main
 import settings
-from controller.badges import generate_badges
+from controller.badges import generate_badges, generate_missing_badges, generate_team_bb_badges
 from controller.tools import parse_yaml
 from model.section import Section
 
@@ -23,12 +23,22 @@ def print_games(db):
         print(f"{game_circuit}  {game_id}   {game_name}")
 
 
+missing_badges = [
+    {"teams": ["6A", "6B", "6C"], "colors": ["#2C5F2D", "#FFE77A"], "amount": 1},
+    {"teams": ["28A", "28B", "28C", "28D", "28E"], "colors": ["#00203F", "#ADEFD1"], "amount": 1},
+    {"teams": ["2A"], "colors": ["#1C1C1B", "#CE4A7E"], "amount": 2},
+    {"teams": ["13A"], "colors": ["#89ABE3", "#FCF6F5"], "amount": 1}
+]
+
+
 def run():
     main.init_api()
     db = firestore.client()
-    # controller.initialization.create_new_db(db, 17, CSV_PATH, GAME_NAMES_PATH)
+    #controller.initialization.create_new_db(db, 17, CSV_PATH, GAME_NAMES_PATH)
     # generate_badges(db, "badges.pdf")
-    # print_games(db)
+    # generate_missing_badges(missing_badges, "badges_manquants.pdf")
+    generate_team_bb_badges(45, 1, "badges_staff.pdf")
+    #print_games(db)
 
 
 if __name__ == '__main__':

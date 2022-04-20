@@ -32,12 +32,12 @@ def run():
         db_1_team_id = db_1_team.to_dict()["id"]
         db_1_team_category = db_1_team.to_dict()["category"]
         db_1_team_city = db_1_team.to_dict()["city"]
-        db_1_team_nbPlayers = db_1_team.to_dict()["id"]
+        db_1_team_nbPlayers = db_1_team.to_dict()["nbPlayers"]
         db_1_team_sectionName = db_1_team.to_dict()["sectionName"]
         db_2_team = db_2.collection(settings.firestore.teams_collection).document(db_1_team_id).get()
         db_2_team_category = db_2_team.to_dict()["category"]
         db_2_team_city = db_2_team.to_dict()["city"]
-        db_2_team_nbPlayers = db_2_team.to_dict()["id"]
+        db_2_team_nbPlayers = db_2_team.to_dict()["nbPlayers"]
         db_2_team_sectionName = db_2_team.to_dict()["sectionName"]
         if db_1_team_sectionName != db_2_team_sectionName:
             differences.append(f"Team {db_1_team_id} db_1 sectionName is '{db_1_team_sectionName}' vs db_2 '{db_2_team_sectionName}'")

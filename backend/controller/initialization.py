@@ -296,7 +296,7 @@ def create_new_db(db, nb_games: int, csv_path: str, game_names_path=""):
                      values of the csv.headers settings in settings.yml
     :param game_names_path path the the file with the game names
     """
-    answer = input(f"This operation is going to clear the {settings.db.project_id} database. Enter 'type' to continue\n")
+    answer = input(f"This operation is going to clear the {settings.db.project_id} database. Type 'yes' to continue\n")
     if answer != "yes":
         print("Answer is not 'yes', aborting")
         exit(0)
