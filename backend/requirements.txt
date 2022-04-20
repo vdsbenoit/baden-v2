@@ -8,3 +8,7 @@ fpdf
 numpy
 Pillow
 more-itertools
+
+# Roadmaps
+docxcompose
+docxtpl

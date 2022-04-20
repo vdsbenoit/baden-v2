@@ -110,6 +110,7 @@ def _create_sections(db, csv_data):
     Process data from a csv holding all the section data
     It creates one document per section in the section collection on firestore
     It also creates a dictionary with one key per category (e.g. louveteaux, lutins etc)
+    Every categories dict value is a section.
     This dictionary is then used by the _create_teams function
     """
     categories = dict()
@@ -160,6 +161,7 @@ def _create_sections(db, csv_data):
 def _create_schedule(db, nb_games: int, nb_circuits: int, game_names=None):
     """
     Generate a new schedule and save it in the DB
+    A team plays in a single circuit
     """
     circuit_ids = list()
     # Clear db
