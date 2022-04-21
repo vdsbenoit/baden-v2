@@ -13,10 +13,10 @@ import settings
 settings.parse()
 
 TEAM_ROADMAP_TEMPLATES = {
-    "A": os.path.join("data/team_roadmap_template.docx"), #fixme: point to the right template
-    "B": os.path.join("data/team_roadmap_template.docx"),
-    "C": os.path.join("data/team_roadmap_template.docx"),
-    "D": os.path.join("data/team_roadmap_template.docx"),
+    "A": os.path.join("data/team_roadmap_templateA.docx"),
+    "B": os.path.join("data/team_roadmap_templateB.docx"),
+    "C": os.path.join("data/team_roadmap_templateC.docx"),
+    "D": os.path.join("data/team_roadmap_templateD.docx"),
 }
 GAME_ROADMAP_TEMPLATE = os.path.join("data/game_roadmap_template.docx")
 

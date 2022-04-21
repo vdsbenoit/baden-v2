@@ -1,4 +1,5 @@
 import itertools
+import re
 import time
 import uuid
 from random import randint
@@ -230,12 +231,31 @@ def validate_game_collection(db, nb_games, nb_circuits):
         - there is the right amount of matches in the DB
     """
     duel_set_list = list()
+    duel_counts = dict()  # dict (key = teamId) made of dicts (sectionNumber->count)
     for time in range(1, nb_games + 1):
         print(f"Validate matches collection for time {time}...")
         player_list = list()
         for m in db.collection(settings.firestore.matches_collection).where("time", "==", time).stream():
             players = m.to_dict()["player_ids"]
             players_set = {players[0], players[1]}
+
+            # Count how many times a team plays against a section
+            section_number_0 = re.sub("[^0-9]", "", players[0])
+            section_number_1 = re.sub("[^0-9]", "", players[1])
+            if not players[0] in duel_counts.keys():
+                duel_counts[players[0]] = dict()
+            if section_number_1 in duel_counts[players[0]].keys():
+                duel_counts[players[0]][section_number_1] += 1
+            else:
+                duel_counts[players[0]][section_number_1] = 1
+
+            if not players[1] in duel_counts.keys():
+                duel_counts[players[1]] = dict()
+            if section_number_0 in duel_counts[players[1]].keys():
+                duel_counts[players[1]][section_number_0] += 1
+            else:
+                duel_counts[players[1]][section_number_0] = 1
+
             assert (
                 players[0] not in player_list
             ), "Team {} plays two games at time {}".format(players[0], time)
@@ -254,6 +274,15 @@ def validate_game_collection(db, nb_games, nb_circuits):
         assert (
             len(player_list) / 2 == nb_games * nb_circuits
         ), "The amount of matches in the DB is incorrect: {} vs {}".format(len(player_list) / 2, nb_games * nb_circuits)
+
+    for team, sections in duel_counts.items():
+        for section, count in sections.items():
+            if count > 4:
+                print(f"Team {team} plays {count} times against section {section}")
+            assert count < 6, f"Team {team} plays {count} times against section {section}"  # fixme: this might not be relevant
+            section_number = re.sub("[^0-9]", "", team)
+            if section_number == section:
+                print(f"Team {team} plays {count} times against its own section")
 
     print("Validate games collection")
     hash_list = list()

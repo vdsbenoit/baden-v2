@@ -37,8 +37,9 @@ def run():
     #controller.initialization.create_new_db(db, 17, CSV_PATH, GAME_NAMES_PATH)
     # generate_badges(db, "badges.pdf")
     # generate_missing_badges(missing_badges, "badges_manquants.pdf")
-    generate_team_bb_badges(45, 1, "badges_staff.pdf")
+    # generate_team_bb_badges(45, 1, "badges_staff.pdf")
     #print_games(db)
+    controller.initialization.validate_game_collection(db, 17, 4)
 
 
 if __name__ == '__main__':
