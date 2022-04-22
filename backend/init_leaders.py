@@ -1,3 +1,5 @@
+import datetime
+
 from firebase_admin import auth
 from firebase_admin import firestore
 
@@ -9,8 +11,8 @@ from model.section import Section
 settings.parse()
 
 
-def set_leaders(db):
-    leaders_config = parse_yaml("data/animateurs.yml")
+def set_leaders(db, config_file):
+    leaders_config = parse_yaml(config_file)
     batch = db.batch()
     for section_name, section_data in leaders_config.items():
         role = section_data["role"]
@@ -20,22 +22,19 @@ def set_leaders(db):
 
         # todo: check if the section exists
         # Add section to db
-        if section_exists:
-            print(f"Section marked as existing: {section_name}")
-        else:
-            doc_ref = db.collection(settings.firestore.sections_collection).document()
-            section_id = doc_ref.id
-            section = Section(
-                section_id,
-                section_name,
-                city,
-                "",
-                "Animateurs",
-                0,
-                0,
-            )
-            batch.set(doc_ref, section.to_dict())
-            print(f"New section created for '{section_name}' with id {doc_ref.id}")
+        doc_ref = db.collection(settings.firestore.sections_collection).document()
+        section_id = doc_ref.id
+        section = Section(
+            section_id,
+            section_name,
+            city,
+            "",
+            "Animateurs",
+            0,
+            0,
+        )
+        batch.set(doc_ref, section.to_dict())
+        print(f"New section created for '{section_name}' with id {doc_ref.id}")
         for leader in leaders:
             user_exists = False
             totem = leader.get("totem", "")
@@ -57,7 +56,8 @@ def set_leaders(db):
                 "sectionId": section_id,
                 "sectionName": section_name,
                 "role": role,
-                "uid": user.uid
+                "uid": user.uid,
+                "creationDate": datetime.datetime.now(tz=datetime.timezone.utc)
             }
             if user_exists:
                 batch.update(db.collection(settings.firestore.profiles_collection).document(user.uid), profile)
@@ -72,7 +72,10 @@ def set_leaders(db):
 def run():
     main.init_api()
     db = firestore.client()
-    set_leaders(db) # attention: ne détecte pas si une section existe déjà!
+    # attention: ne détecte pas si une section existe déjà!
+    # ce script recrée les sections à chaque fois
+    # set_leaders(db, "data/animateurs.yml")
+    set_leaders(db, "data/animateurs.yml")
 
 
 if __name__ == '__main__':
