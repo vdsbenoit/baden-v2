@@ -7,6 +7,7 @@ from random import randint
 from google.cloud import firestore
 
 import settings
+from controller.team_circuit_distribution import distribute_teams
 from controller.tools import parse_csv, parse_game_names
 from model import util
 from model.game import Game
@@ -106,12 +107,12 @@ def _create_teams(db, categories: dict, nb_games: int):
     print("Teams saved to the DB")
 
 
-def _create_sections(db, csv_data):
+def _create_sections(db, section_data):
     """
     Process data from a csv holding all the section data
     It creates one document per section in the section collection on firestore
     It also creates a dictionary with one key per category (e.g. louveteaux, lutins etc)
-    Every categories dict value is a section.
+    Every category dict value is a section.
     This dictionary is then used by the _create_teams function
     """
     categories = dict()
@@ -123,21 +124,22 @@ def _create_sections(db, csv_data):
     batch = db.batch()
 
     # process data from csv file
-    for section_data in csv_data:
+    for section in section_data:
         # Get an id for the section
         doc_ref = db.collection(settings.firestore.sections_collection).document()
         section_id = doc_ref.id
-        category = section_data[settings.csv.headers.category]
+        category = section["category"]
 
         # create a section object
         section = Section(
             section_id,
-            section_data[settings.csv.headers.name],
-            section_data[settings.csv.headers.city],
-            section_data[settings.csv.headers.unit],
-            section_data[settings.csv.headers.category],
-            int(section_data[settings.csv.headers.nb_teams]),
-            int(section_data[settings.csv.headers.nb_players]),
+            section["name"],
+            section["city"],
+            section["unit"],
+            section["category"],
+            int(section["nb_teams"]),
+            int(section["players"]),
+            int(section["players_per_team"]),
         )
 
         # Insert the section object in the categories dict
@@ -220,7 +222,7 @@ def _create_schedule(db, nb_games: int, nb_circuits: int, game_names=None):
         print(f"Circuit {circuit_id} games added to the DB")
 
 
-def validate_game_collection(db, nb_games, nb_circuits):
+def validate_game_collection(db, nb_games):
     """
     Assert the game setup complies with the following constraints:
         - a team cannot play against itself
@@ -232,6 +234,7 @@ def validate_game_collection(db, nb_games, nb_circuits):
     """
     duel_set_list = list()
     duel_counts = dict()  # dict (key = teamId) made of dicts (sectionNumber->count)
+    nb_circuits = len(db.collection(settings.firestore.settings_collection).document(settings.firestore.settings_document).get().to_dict()["circuits"])
     for time in range(1, nb_games + 1):
         print(f"Validate matches collection for time {time}...")
         player_list = list()
@@ -315,47 +318,74 @@ def validate_game_collection(db, nb_games, nb_circuits):
     print("DB validated with success")
 
 
-def create_new_db(db, nb_games: int, csv_path: str, game_names_path=""):
+def get_values_from_dict_key(dictionary, key):
+    """
+    Get all the values of a key in a dict
+    :param dictionary: the dict
+    :param key: the key
+    :return: a list of values
+    """
+    return set([d[key] for d in dictionary])
+
+def create_new_db(db, section_data: list, games_per_circuit: int, min_players_per_team: int, max_players_per_team:int, game_names_path=""):
     """
     Generate a new schedule and save it in the DB
     Beware: it erases the previous teams, games & matches collections
     :param db: a Firestore db object
-    :param nb_games: amount of games per circuit (amount of matches == amount of teams)
-    :param csv_path: path to the csv files with the game data. This file must have headers that matches the 
-                     values of the csv.headers settings in settings.yml
-    :param game_names_path path the the file with the game names
+    :param games_per_circuit: amount of games per circuit (amount of matches == amount of teams)
+    :param section_data: list of sections (dict). Every dict must contain the following keys:
+        - category: the category of the section
+        - name: the name of the section
+        - city: the city of the section
+        - unit: the unit of the section
+        - nb_players: the number of players in the section
+        - nb_leaders: the number of leaders in the section
+    :param game_names_path path the file with the game names
     """
+    # check parameters
     answer = input(f"This operation is going to clear the {settings.db.project_id} database. Type 'yes' to continue\n")
     if answer != "yes":
         print("Answer is not 'yes', aborting")
         exit(0)
-    if nb_games % 2 == 0:
-        raise Exception("The game amount must be a odd value")
-    if nb_games < 1:
-        raise Exception("The game amount must higher than 0")
-    if nb_games != abs(nb_games):
-        raise Exception("The game amount must be an integer")
+    if games_per_circuit % 2 == 0:
+        raise Exception("The number of games per circuit must be a odd value")
+    if games_per_circuit < 1:
+        raise Exception("The number of games per circuit must higher than 0")
+    if games_per_circuit != abs(games_per_circuit):
+        raise Exception("The number of games per circuit must be an integer")
     total_team_count = 0
 
-    # read data from csv
-    csv_data = parse_csv(csv_path)
+    # define how many circuits and how many teams per section
+    category_names = {s["category"] for s in section_data}
+    nb_circuits = 0
+    for category_name in category_names:
+        data = [s for s in section_data if s["category"] == category_name]
+        nb_circuits += distribute_teams(data, games_per_circuit, min_players_per_team, max_players_per_team)
+
     # read data game file
     game_names = parse_game_names(game_names_path) if game_names_path else None
-    # process data from csv
-    categories = _create_sections(db, csv_data)
+    # create sections
+    categories = _create_sections(db, section_data)
     # check categories & sections data
     for category_name, sections in categories.items():
         cat_team_count = 0
         section: Section
         for section in sections:
             cat_team_count += section.nbTeams
-        if cat_team_count % (2 * nb_games) != 0:
+        if cat_team_count % (2 * games_per_circuit) != 0:
             raise Exception(
                 "The total amount of teams in a category must be a multiple of the double fo the amount of games.\n"
-                "{} has {} teams, which is not a multiple of {}".format(category_name, cat_team_count, 2 * nb_games)
+                "{} has {} teams, which is not a multiple of {}".format(category_name, cat_team_count, 2 * games_per_circuit)
             )
         total_team_count += cat_team_count
-    nb_circuits = total_team_count / (2 * nb_games)
+    nb_circuits_check = total_team_count / (2 * games_per_circuit)
+    if nb_circuits_check != nb_circuits:
+        raise Exception(
+            "The total amount of teams in all categories divided by double fo the amount of games should be equal to the number of circuits.\n"
+            f"The total amount of teams is {total_team_count}\n"
+            f"games_per_circuit is set to {games_per_circuit}\n"
+            f"The algo computed {nb_circuits} circuits\n"
+        )
     if nb_circuits != abs(nb_circuits):
         raise Exception(f"The circuit amount ({nb_circuits}) must be an integer.")
     nb_circuits = int(nb_circuits)
@@ -364,6 +394,6 @@ def create_new_db(db, nb_games: int, csv_path: str, game_names_path=""):
     if nb_circuits > 26:
         raise Exception(f"The circuit amount ({nb_circuits}) must be lower than 26")
     print(f"{nb_circuits} circuits will be created")
-    _create_schedule(db, nb_games, nb_circuits, game_names)
-    _create_teams(db, categories, nb_games)
-    validate_game_collection(db, nb_games, nb_circuits)
+    _create_schedule(db, games_per_circuit, nb_circuits, game_names)
+    _create_teams(db, categories, games_per_circuit)
+    validate_game_collection(db, games_per_circuit)

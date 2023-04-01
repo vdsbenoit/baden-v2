@@ -1,6 +1,7 @@
 firebase_admin
 flask
 mock
+pulp
 pyyaml
 
 # Badges

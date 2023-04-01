@@ -25,7 +25,7 @@ Clear the collections `games` `matches` & `teams` and create a new schedule. The
 
 The script creates games, matches & teams. It shuffles teams across every circuits but it ensures a team only plays in a single circuit. 
 
-Players from one category never play with players from another section (called categories in the python conde. For instance,  `Louveteaux` always plays against `Louveteaux`.
+Players from one category never play with players from another section (called categories in the python code. For instance,  `Louveteaux` always plays against `Louveteaux`.
 
 Circuits are defined in the order of the category definitions.
 
