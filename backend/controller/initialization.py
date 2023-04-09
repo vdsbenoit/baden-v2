@@ -318,15 +318,6 @@ def validate_game_collection(db, nb_games):
     print("DB validated with success")
 
 
-def get_values_from_dict_key(dictionary, key):
-    """
-    Get all the values of a key in a dict
-    :param dictionary: the dict
-    :param key: the key
-    :return: a list of values
-    """
-    return set([d[key] for d in dictionary])
-
 def create_new_db(db, section_data: list, games_per_circuit: int, min_players_per_team: int, max_players_per_team:int, game_names_path=""):
     """
     Generate a new schedule and save it in the DB
