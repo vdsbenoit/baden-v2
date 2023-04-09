@@ -1,9 +1,9 @@
 # prod DB
-.db:
+db:
   cred_file: cred.json
   project_id: badenbattle-a0dec
 # dev DB
-db:
+.db:
   cred_file: cred-dev.json
   project_id: mailmerge-59e91
 csv:
